@@ -1,0 +1,34 @@
+plugins {
+    id "io.freefair.lombok" version "6.4.0"
+    id 'application'
+}
+
+
+
+version = '1.0.0'
+
+group = 'nu.mine.mosher.pdf'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'com.itextpdf', name: 'itext7-core', version: 'latest.release'
+    implementation group: 'nu.mine.mosher.gnopt', name: 'Gnopt', version: 'latest.integration'
+//    implementation group: 'com.adobe.xmp', name: 'xmpcore', version: 'latest.release'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: 'latest.release'
+    implementation group: 'org.fusesource.jansi', name: 'jansi', version: '1.+'
+}
+
+
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of 17
+    }
+}
+
+application {
+    mainClass.set 'nu.mine.mosher.pdf.SecurePdf'
+}
