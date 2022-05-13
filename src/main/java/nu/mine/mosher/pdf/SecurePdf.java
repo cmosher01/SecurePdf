@@ -166,7 +166,7 @@ public class SecurePdf {
 
         signer.signDetached(
             new BouncyCastleDigest(),
-            new PrivateKeySignature(pk, DigestAlgorithms.SHA512, provider.getName()),
+            new PrivateKeySignature(pk, DigestAlgorithms.SHA384, provider.getName()),
             chain,
             List.of(new CrlClientOnline(chain)),
             new OcspClientBouncyCastle(null),

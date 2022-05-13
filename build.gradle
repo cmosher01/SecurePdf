@@ -16,7 +16,6 @@ repositories {
 dependencies {
     implementation group: 'com.itextpdf', name: 'itext7-core', version: 'latest.release'
     implementation group: 'nu.mine.mosher.gnopt', name: 'Gnopt', version: 'latest.integration'
-//    implementation group: 'com.adobe.xmp', name: 'xmpcore', version: 'latest.release'
     implementation group: 'ch.qos.logback', name: 'logback-classic', version: 'latest.release'
     implementation group: 'org.fusesource.jansi', name: 'jansi', version: '1.+'
 }
