@@ -8,6 +8,7 @@ public class SecurePdfCli {
         return this.base != null;
     }
 
+    boolean help;
     String base;
     String graphic;
     String keystore;
@@ -20,12 +21,14 @@ public class SecurePdfCli {
         System.out.println("usage:");
         System.out.println("    SecurePdf [OPTIONS] base-name");
         System.out.println("options:");
+        System.out.println("    --help");
         System.out.println("    --page");
         System.out.println("    --keystore");
         System.out.println("    --password");
         System.out.println("    --location");
         System.out.println("    --graphic");
         System.out.println("    --height");
+        this.help = true;
     }
 
     public void __(final Optional<String> v) {

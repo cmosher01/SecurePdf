@@ -34,6 +34,9 @@ public class SecurePdf {
 
     public static void main(final String... args) throws IOException, XMPException, GeneralSecurityException, Gnopt.InvalidOption {
         val opts = Gnopt.process(SecurePdfCli.class, args);
+        if (opts.help) {
+            return;
+        }
         if (!opts.valid()) {
             log.error("Missing arguments. For help: SecurePdf --help");
             return;
