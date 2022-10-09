@@ -10,7 +10,7 @@ import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.xmp.*;
 import com.itextpdf.kernel.xmp.options.IteratorOptions;
-import com.itextpdf.kernel.xmp.properties.XMPPropertyInfo;
+import com.itextpdf.kernel.xmp.properties.*;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.signatures.*;
@@ -27,6 +27,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.*;
 import java.util.*;
 
+@SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "OptionalIsPresent"})
 @Slf4j
 public class SecurePdf {
     private static final float SCALE = 72.0f / 300.0f;
@@ -70,7 +71,7 @@ public class SecurePdf {
 
         try (val pdf = new PdfDocument(new PdfWriter(opts.base+".tmp", new WriterProperties().addXmpMetadata().setPdfVersion(PdfVersion.PDF_1_7)))) {
             log.info("creating PDF file...");
-            setPrefsOf(pdf, creator.get().getValue(), title.get().getValue());
+            setPrefsOf(pdf, creator, title);
             for (val e : pages.entrySet()) {
                 addImagePage(e.getValue(), pdf);
             }
@@ -79,10 +80,11 @@ public class SecurePdf {
         }
 
         val loc = (location.isPresent() ? location.get().getValue() : opts.location);
-        sign(size, opts.height, creator.get().toString(), loc, opts.graphic, opts.page, opts.keystore, opts.keystorePassword, opts.base+".tmp", opts.base+".pdf");
+        val author = (creator.isPresent() ? creator.get().getValue() : "The authors");
+        sign(size, opts.height, author, loc, opts.graphic, opts.page, opts.keystore, opts.keystorePassword, opts.base+".tmp", opts.base+".pdf");
     }
 
-    private static void setPrefsOf(final PdfDocument pdf, String author, String title) {
+    private static void setPrefsOf(final PdfDocument pdf, Optional<XMPProperty> author, Optional<XMPProperty> title) {
 //        val prefs = new PdfViewerPreferences();
 //        prefs.setFitWindow(true);
 //        prefs.setHideMenubar(false);
@@ -99,7 +101,12 @@ public class SecurePdf {
 //        xmp.setProperty();
 //        pdf.setXmpMetadata(xmp);
 
-        pdf.getDocumentInfo().setAuthor(author).setTitle(title);
+        if (author.isPresent()) {
+            pdf.getDocumentInfo().setAuthor(author.get().getValue());
+        }
+        if (title.isPresent()) {
+            pdf.getDocumentInfo().setTitle(title.get().getValue());
+        }
     }
 
     private static void addPagesTo(final Path dir, final Map<String, Path> pages) throws IOException {
@@ -129,11 +136,10 @@ public class SecurePdf {
         val size = new Rectangle(image.getImageScaledWidth(), image.getImageScaledHeight());
         log.info("    image size: {}", size);
         val page = pdf.addNewPage(new PageSize(size));
-        val canvas = new Canvas(new PdfCanvas(page), size);
-        canvas.add(image);
+        try (val canvas = new Canvas(new PdfCanvas(page), size)) {
+            canvas.add(image);
+        }
     }
-
-
 
     private static void sign(final Rectangle size, float height, String creator, String location, String graphic, int page, String keystore, String password, String source, String dest) throws GeneralSecurityException, IOException {
         val provider = new BouncyCastleProvider();

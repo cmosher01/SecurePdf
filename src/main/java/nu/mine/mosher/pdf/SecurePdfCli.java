@@ -2,7 +2,7 @@ package nu.mine.mosher.pdf;
 
 import java.util.Optional;
 
-@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+@SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "unused"})
 public class SecurePdfCli {
     boolean valid() {
         return this.base != null;
@@ -32,51 +32,30 @@ public class SecurePdfCli {
     }
 
     public void __(final Optional<String> v) {
-        if (v.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        this.base = v.get();
+        this.base = v.orElseThrow();
     }
 
     public void location(final Optional<String> v) {
-        if (v.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        this.location = v.get();
+        this.location = v.orElseThrow();
     }
 
     public void graphic(final Optional<String> v) {
-        if (v.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        this.graphic = v.get();
+        this.graphic = v.orElseThrow();
     }
 
     public void keystore(final Optional<String> v) {
-        if (v.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        this.keystore = v.get();
+        this.keystore = v.orElseThrow();
     }
 
     public void password(final Optional<String> v) {
-        if (v.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        this.keystorePassword = v.get();
+        this.keystorePassword = v.orElseThrow();
     }
 
     public void page(final Optional<String> v) {
-        if (v.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        this.page = Integer.parseInt(v.get());
+        this.page = Integer.parseInt(v.orElseThrow());
     }
 
     public void height(final Optional<String> v) {
-        if (v.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        this.height = Float.parseFloat(v.get());
+        this.height = Float.parseFloat(v.orElseThrow());
     }
 }

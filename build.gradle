@@ -11,13 +11,18 @@ group = 'nu.mine.mosher.pdf'
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri('https://public:\u0067hp_fya6Kseu3XOBMg2icbg7f1LP6ZFYjj35v4Zj@maven.pkg.github.com/cmosher01/*')
+    }
 }
 
 dependencies {
     implementation group: 'com.itextpdf', name: 'itext7-core', version: 'latest.release'
-    implementation group: 'nu.mine.mosher.gnopt', name: 'Gnopt', version: 'latest.integration'
-    implementation group: 'ch.qos.logback', name: 'logback-classic', version: 'latest.release'
-    implementation group: 'org.fusesource.jansi', name: 'jansi', version: '1.+'
+    implementation group: 'nu.mine.mosher.gnopt', name: 'gnopt', version: 'latest.release'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: 'latest.release'
+
+    runtimeOnly group: 'org.fusesource.jansi', name: 'jansi', version: '1.+'
+    runtimeOnly group: 'ch.qos.logback', name: 'logback-classic', version: 'latest.release'
 }
 
 
@@ -29,5 +34,5 @@ java {
 }
 
 application {
-    mainClass.set 'nu.mine.mosher.pdf.SecurePdf'
+    mainClass = 'nu.mine.mosher.pdf.SecurePdf'
 }

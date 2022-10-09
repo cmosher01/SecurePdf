@@ -24,11 +24,11 @@ nam="${base%.*}"
 ext="${base##*.}"
 
 echo "base: $base"
-echo "name: $name"
+echo "name: $nam"
 echo " ext: $ext"
 
 t=$(mktemp -d)
-cd $t
+cd $t || exit 1
 
 #nam="${nam%_pdf}"
 
@@ -51,11 +51,11 @@ cd $t
 
 
 mkdir -p $nam
-cd $nam
+cd $nam || exit 1
 rm *.jpg
 convert $cvt_opts ../$nam-txt.pdf $nam.jpg
 exiftool -tagsfromfile ../../$nam.xmp -xmp:all -overwrite_original_in_place *.jpg
-cd -
+cd - || exit 1
 
 cp -v ../$nam.xmp ./
 
