@@ -166,11 +166,11 @@ public class SecurePdf {
             .setContact(creator)
             .setLocation(location)
             .setSignatureGraphic(ImageDataFactory.create(graphic))
-            .setLayer2Font(PdfFontFactory.createFont(StandardFontFamilies.COURIER))
-            .setLayer2FontSize(8.0f)
+            .setLayer2Font(PdfFontFactory.createFont(StandardFontFamilies.HELVETICA))
+            .setLayer2FontSize(6.0f)
             .setLayer2FontColor(new DeviceRgb(101, 123, 131)) // solarized:base00
             .setRenderingMode(PdfSignatureAppearance.RenderingMode.GRAPHIC_AND_DESCRIPTION)
-            .setPageRect(new Rectangle(10.0f, 10.0f, size.getWidth()-20.0f, height))
+            .setPageRect(new Rectangle(50.0f, 140.0f, size.getWidth()-100.0f, height))
             .setPageNumber(page);
 
         signer.signDetached(

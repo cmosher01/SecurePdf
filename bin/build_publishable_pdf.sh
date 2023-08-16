@@ -1,12 +1,15 @@
 #!/bin/sh -x
 
+me="$(readlink -f -- "$0")"
+here="$(dirname -- "$me")"
+
 # requires:
-# lyx or libreoffice or ConTeXt (depending in input source file)
+# xelatex
 # convert (ImageMagick)
 # qpdf
 
 # if [ -z "$3" ] ; then
-#     echo "usage: $0 lyx-or-odt-file user-pass owner-pass"
+#     echo "usage: $0 NAME.tex user-pass owner-pass"
 #     exit 1
 # fi
 
@@ -19,10 +22,16 @@ if [ ! -e "$1" ] ; then
     exit 1
 fi
 
-base="$(basename $1)"
+dir="$(dirname -- "$1")"
+dir="$(cd "$dir" >/dev/null 2>&1; pwd -P)"
+base="$(basename -- "$1")"
+fullname="$dir/$base"
 nam="${base%.*}"
 ext="${base##*.}"
 
+
+echo "full: $fullname"
+echo " dir: $dir"
 echo "base: $base"
 echo "name: $nam"
 echo " ext: $ext"
@@ -30,7 +39,6 @@ echo " ext: $ext"
 t=$(mktemp -d)
 cd $t || exit 1
 
-#nam="${nam%_pdf}"
 
 
 
@@ -38,7 +46,7 @@ cd $t || exit 1
 #     # convert lyx to pdf
 #     lyx -batch -E pdf4 $nam-txt.pdf $nam.lyx
 # elif [ $ext = context -o $ext = tex ] ; then
-    context --debug --result=$nam-txt.pdf $1
+#    context --debug --result=$nam-txt.pdf $1
 # elif [ $ext = fodt -o $ext = odt ] ; then
 #     # export original ODT source document to (text-based) PDF file
 #     soffice --headless --convert-to pdf $nam.fodt
@@ -47,21 +55,25 @@ cd $t || exit 1
 #     echo "filetype not supported"
 #     exit 1
 # fi
+mkdir build
+cd build || exit 1
+xelatex -interaction=nonstopmode --shell-escape "$fullname" >$nam.pass1.log 2>&1
+xelatex -interaction=nonstopmode --shell-escape "$fullname" >$nam.pass2.log 2>&1
+mv -nv $nam.pdf $nam-txt.pdf
+cd ..
 
-
-
-mkdir -p $nam
+mkdir $nam
 cd $nam || exit 1
-rm *.jpg
-convert $cvt_opts ../$nam-txt.pdf $nam.jpg
-exiftool -tagsfromfile ../../$nam.xmp -xmp:all -overwrite_original_in_place *.jpg
-cd - || exit 1
+convert $cvt_opts ../build/$nam-txt.pdf $nam-%03d.jpg
+#############exiftool -tagsfromfile ../../$nam.xmp -xmp:all -overwrite_original_in_place *.jpg
+cd ..
 
-cp -v ../$nam.xmp ./
+cp -v $dir/$nam.xmp ./
 
-SecurePdf $nam \
+$here/../SecurePdf-1.0.0/bin/SecurePdf \
+    $nam \
     --keystore=/srv/arc/mosher.mine.nu.p12 \
-    --graphic=../../sigstamp.png \
+    --graphic=/srv/arc/sigstamp.png \
     --page=2 \
     --height=36
 
@@ -70,7 +82,7 @@ cat $nam.sha384
 hash_value=$(cat $nam.sha384 | cut -d\  -f1 | xxd -r -p - | base32 -w 0 -)
 echo "urn:hash:application/pdf:sha384:$hash_value" >$nam.urn
 
-
+pwd
 
 
 

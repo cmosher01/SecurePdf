@@ -20,6 +20,8 @@ dependencies {
     implementation group: 'com.itextpdf', name: 'itext7-core', version: 'latest.release'
     implementation group: 'nu.mine.mosher.gnopt', name: 'gnopt', version: 'latest.release'
     implementation group: 'org.slf4j', name: 'slf4j-api', version: 'latest.release'
+    implementation group: 'com.itextpdf', name: 'bouncy-castle-adapter', version: 'latest.release'
+    implementation group: 'org.bouncycastle', name: 'bcprov-jdk18on', version: 'latest.release'
 
     runtimeOnly group: 'org.fusesource.jansi', name: 'jansi', version: '1.+'
     runtimeOnly group: 'ch.qos.logback', name: 'logback-classic', version: 'latest.release'
