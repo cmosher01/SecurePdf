@@ -59,13 +59,11 @@ mkdir build
 cd build || exit 1
 xelatex -interaction=nonstopmode --shell-escape "$fullname" >$nam.pass1.log 2>&1
 xelatex -interaction=nonstopmode --shell-escape "$fullname" >$nam.pass2.log 2>&1
-mv -nv $nam.pdf $nam-txt.pdf
 cd ..
 
 mkdir $nam
 cd $nam || exit 1
-convert $cvt_opts ../build/$nam-txt.pdf $nam-%03d.jpg
-#############exiftool -tagsfromfile ../../$nam.xmp -xmp:all -overwrite_original_in_place *.jpg
+convert $cvt_opts ../build/$nam.pdf $nam-%03d.jpg
 cd ..
 
 cp -v $dir/$nam.xmp ./
@@ -73,14 +71,21 @@ cp -v $dir/$nam.xmp ./
 $here/../SecurePdf-1.0.0/bin/SecurePdf \
     $nam \
     --keystore=/srv/arc/mosher.mine.nu.p12 \
-    --graphic=/srv/arc/sigstamp.png \
-    --page=2 \
-    --height=36
+    --graphic=/srv/arc/sigstamp.png
 
-sha384sum -b $nam.pdf >$nam.sha384
+ts=$(exiftool -d %Y-%m-%dT%H:%M:%S%z -SigningDate -l $nam.pdf | tail -n 1 | date -f - -u +%Y%m%dT%H%M%SZ)
+echo "PDF signature timestamp: $ts"
+mv -nv $nam.pdf $nam.$ts.pdf
+
+sha384sum -b $nam.$ts.pdf >$nam.sha384
 cat $nam.sha384
+
 hash_value=$(cat $nam.sha384 | cut -d\  -f1 | xxd -r -p - | base32 -w 0 -)
-echo "urn:hash:application/pdf:sha384:$hash_value" >$nam.urn
+urn="urn:hash:application/pdf:sha384:$hash_value"
+echo "$urn" >$nam.urn
+cat $nam.urn
+
+# TODO build index.xhtml file
 
 pwd
 

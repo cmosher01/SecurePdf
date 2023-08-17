@@ -81,7 +81,7 @@ public class SecurePdf {
 
         val loc = (location.isPresent() ? location.get().getValue() : opts.location);
         val author = (creator.isPresent() ? creator.get().getValue() : "The authors");
-        sign(size, opts.height, author, loc, opts.graphic, opts.page, opts.keystore, opts.keystorePassword, opts.base+".tmp", opts.base+".pdf");
+        sign(opts, size, author, loc, opts.base+".tmp", opts.base+".pdf");
     }
 
     private static void setPrefsOf(final PdfDocument pdf, Optional<XMPProperty> author, Optional<XMPProperty> title) {
@@ -141,14 +141,14 @@ public class SecurePdf {
         }
     }
 
-    private static void sign(final Rectangle size, float height, String creator, String location, String graphic, int page, String keystore, String password, String source, String dest) throws GeneralSecurityException, IOException {
+    private static void sign(final SecurePdfCli opts, final Rectangle size, final String creator, final String location, final String source, final String dest) throws GeneralSecurityException, IOException {
         val provider = new BouncyCastleProvider();
         Security.addProvider(provider);
 
         val ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        ks.load(new FileInputStream(keystore), password.toCharArray());
+        ks.load(new FileInputStream(opts.keystore), opts.keystorePassword.toCharArray());
         val alias = ks.aliases().nextElement();
-        val pk = (PrivateKey) ks.getKey(alias, password.toCharArray());
+        val pk = (PrivateKey) ks.getKey(alias, opts.keystorePassword.toCharArray());
         val chain = ks.getCertificateChain(alias);
 
         val signer = new PdfSigner(
@@ -165,13 +165,13 @@ public class SecurePdf {
             .setReason("creator "+creator)
             .setContact(creator)
             .setLocation(location)
-            .setSignatureGraphic(ImageDataFactory.create(graphic))
+            .setSignatureGraphic(ImageDataFactory.create(opts.graphic))
             .setLayer2Font(PdfFontFactory.createFont(StandardFontFamilies.HELVETICA))
             .setLayer2FontSize(6.0f)
             .setLayer2FontColor(new DeviceRgb(101, 123, 131)) // solarized:base00
             .setRenderingMode(PdfSignatureAppearance.RenderingMode.GRAPHIC_AND_DESCRIPTION)
-            .setPageRect(new Rectangle(50.0f, 140.0f, size.getWidth()-100.0f, height))
-            .setPageNumber(page);
+            .setPageRect(new Rectangle(opts.left, opts.bottom, size.getWidth()- opts.margins, opts.height))
+            .setPageNumber(opts.page);
 
         signer.signDetached(
             new BouncyCastleDigest(),

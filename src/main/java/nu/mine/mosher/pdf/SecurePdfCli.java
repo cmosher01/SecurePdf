@@ -15,7 +15,10 @@ public class SecurePdfCli {
     String keystorePassword = "";
     String location = "";
     int page = 1;
-    float height = 60.0f;
+    float height = 40.0f;
+    float left = 52.0f;
+    float bottom = 130.0f;
+    float margins = 0.0f;
 
     public void help(final Optional<String> v) {
         System.out.println("usage:");
@@ -28,6 +31,8 @@ public class SecurePdfCli {
         System.out.println("    --location");
         System.out.println("    --graphic");
         System.out.println("    --height");
+        System.out.println("    --left");
+        System.out.println("    --margins");
         this.help = true;
     }
 
@@ -57,5 +62,17 @@ public class SecurePdfCli {
 
     public void height(final Optional<String> v) {
         this.height = Float.parseFloat(v.orElseThrow());
+    }
+
+    public void left(final Optional<String> v) {
+        this.left = Float.parseFloat(v.orElseThrow());
+    }
+
+    public void bottom(final Optional<String> v) {
+        this.bottom = Float.parseFloat(v.orElseThrow());
+    }
+
+    public void margins(final Optional<String> v) {
+        this.margins = Float.parseFloat(v.orElseThrow());
     }
 }
